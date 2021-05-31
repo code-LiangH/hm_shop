@@ -18,7 +18,7 @@
             ></el-input>
           </el-form-item>
 
-          <!-- 密码 (重要！prop不能为password，否则有错误-->
+          <!-- 密码 (重要！prop值要和v-model里的值一样，否则有错误-->
           <el-form-item prop="password">
             <el-input
               v-model="form.password"
