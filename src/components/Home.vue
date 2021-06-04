@@ -22,11 +22,12 @@
         <el-menu
           background-color="#4C4C4C"
           text-color="#ffffff"
-          active-text-color="#1296db"
+          active-text-color="red"
           unique-opened 
           :collapse="iscollapse"   
           :collapse-transition="false"
           router
+          :default-active="$route.path"
         >
           <!-- 一级菜单 -->
           <!-- index的值若是唯一的，则点开一个菜单，所有菜单都会点开，所以要唯一 ，且只接受字符串-->
@@ -75,7 +76,8 @@ export default {
     const {data: res} = await this.$http.get("menus")  
       if(res.meta.status != 200) this.$message.error(res.meta.msgs)
       this.menulist = res.data
-      console.log(this.menulist)
+      // console.log(this.menulist)
+      // console.log(this.$http.get("menus"))
   }
   ,
   methods: {
