@@ -16,6 +16,7 @@ import {Switch} from "element-ui"
 import {Tooltip} from "element-ui"
 import {Pagination} from "element-ui"
 import {Dialog} from "element-ui"
+import {MessageBox} from "element-ui"
 
 Vue.use(Button)
 Vue.use(Form)
@@ -43,3 +44,4 @@ Vue.use(Dialog)
 
 
 Vue.prototype.$message = Message   //message可以是任意字母
+Vue.prototype.$confirm = MessageBox.confirm
