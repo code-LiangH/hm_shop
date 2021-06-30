@@ -17,7 +17,7 @@
             placeholder="请输入内容"
             v-model="queryInfo.query"
             clearable
-            @clear="getUseList"
+            @clear="getUseList" 
           >
             <!-- 点击搜索按钮，即可重新返回响应参数 -->
             <el-button

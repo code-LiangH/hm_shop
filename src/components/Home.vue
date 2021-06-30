@@ -6,7 +6,7 @@
         <img src="../assets/img/dianshang.png" alt="" />
         后台管理系统
       </div>
-      <el-button type="info" @click="tuichu">推出登录</el-button>
+      <el-button type="info" @click="tuichu()">推出登录</el-button>
     </el-header>
 
     <!-- //中间栏 -->

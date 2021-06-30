@@ -14,6 +14,7 @@ axios.interceptors.request.use(config => { //请求拦截器，请求时为该�
 Vue.prototype.$http = axios
 
 
+//关闭生产提示
 Vue.config.productionTip = false
 
 new Vue({
