@@ -17,22 +17,16 @@
             placeholder="请输入内容"
             v-model="queryInfo.query"
             clearable
-            @clear="getUseList" 
+            @clear="getUseList"
           >
             <!-- 点击搜索按钮，即可重新返回响应参数 -->
-            <el-button
-              slot="append"
-              icon="el-icon-search"
-              @click="getUseList"
-            ></el-button>
+            <el-button slot="append" icon="el-icon-search" @click="getUseList"></el-button>
           </el-input>
         </el-col>
 
         <el-col :span="4">
           <!-- 点击创建用户，弹出对话框 -->
-          <el-button type="primary" @click="addDialog = !addDialog"
-            >添加用户</el-button
-          >
+          <el-button type="primary" @click="addDialog = !addDialog">添加用户</el-button>
         </el-col>
       </el-row>
 
@@ -77,6 +71,7 @@
                 type="warning"
                 icon="el-icon-setting"
                 size="mini"
+                @click="editRole(scope.row)"
               ></el-button>
             </el-tooltip>
           </template>
@@ -98,19 +93,9 @@
 
     <!-- 添加用户对话框 -->
     <!--  :visible.sync的值若为true，则弹出 -->
-    <el-dialog
-      title="请输入用户信息"
-      :visible.sync="addDialog"
-      width="50%"
-      @close="addClose"
-    >
+    <el-dialog title="请输入用户信息" :visible.sync="addDialog" width="50%" @close="addClose">
       <!-- 弹出对话框里的表单 -->
-      <el-form
-        :model="addUser"
-        :rules="addRules"
-        ref="addUserRef"
-        label-width="70px"
-      >
+      <el-form :model="addUser" :rules="addRules" ref="addUserRef" label-width="70px">
         <!-- 添加用户名 -->
         <el-form-item label="用户名" prop="username">
           <el-input v-model="addUser.username"></el-input>
@@ -155,6 +140,30 @@
         <el-button type="primary" @click="editUserForm()">确 定</el-button>
       </span>
     </el-dialog>
+
+    <!-- 为用户分配角色对话框 -->
+    <el-dialog title="分配角色" :visible.sync="editDialog" width="30%">
+      <div>
+        <h2>当前用户{{ userInfo.username }}</h2>
+        <h2>当前角色{{ userInfo.role_name }}</h2>
+        <p>
+          分配角色：
+          <el-select v-model="selectRole" placeholder="请选择">
+            <el-option
+              v-for="item in roleList"
+              :key="item.id"
+              :label="item.roleName"
+              :value="item.id"
+            >
+            </el-option>
+          </el-select>
+        </p>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="editDialog = false">取 消</el-button>
+        <el-button type="primary" @click="asveRole()">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -185,6 +194,10 @@ export default {
       addDialog: false, //添加用户数据对话框默认为false
       editDialogShow: false, //修改用户对话框默认为false
       editSelectUser: {},
+      editDialog: false, //分配角色对话框
+      userInfo: {}, //分配角色的用户信息
+      roleList: [], //所以角色的列表
+      selectRole: "", //当前已选中的角色名
       addUser: {
         username: "",
         password: "",
@@ -257,9 +270,7 @@ export default {
     },
     async userstateChange(data) {
       // console.log(data)      //获取当前的数据对象
-      const { data: res } = await this.$http.put(
-        `users/${data.id}/state/${data.mg_state}`
-      ); //发送put请求，修该开关状态
+      const { data: res } = await this.$http.put(`users/${data.id}/state/${data.mg_state}`); //发送put请求，修该开关状态
 
       if (res.meta.status != 200) return this.$message.error("更新用户失败");
       this.$message.success("更新用户成功！");
@@ -289,46 +300,65 @@ export default {
       this.editDialogShow = true;
     },
     //修改用户时点击确定时的表单验证
-     editUserForm() {
-      this.$refs.formEdit.validate( async valid => {
-        if(valid)
-           {
-             const {data: res} = await this.$http.put("users/"+this.editSelectUser.id,{
-               email: this.editSelectUser.email,
-               mobile: this.editSelectUser.mobile
-             })
-             if(res.meta.status != 200) return this.$message.error("失败")
-           }
-        
-        //关闭对话框
-        this.editDialogShow = false
-        //更新数据列表
-        this.getUseList()
-        //提示修改成功
-        this.$message.success("修改成功")
+    editUserForm() {
+      this.$refs.formEdit.validate(async (valid) => {
+        if (valid) {
+          const { data: res } = await this.$http.put("users/" + this.editSelectUser.id, {
+            email: this.editSelectUser.email,
+            mobile: this.editSelectUser.mobile,
+          });
+          if (res.meta.status != 200) return this.$message.error("失败");
+        }
 
-      })
+        //关闭对话框
+        this.editDialogShow = false;
+        //更新数据列表
+        this.getUseList();
+        //提示修改成功
+        this.$message.success("修改成功");
+      });
     },
     //根据id值删除id值
-    async removeUserById(id){
+    async removeUserById(id) {
       //弹窗询问用户是否删除数据
-      const confirmResult = await this.$confirm(
-        '此操作将永久删除该文件, 是否继t续?', '提示',{
-          confirmButtonText: '确定',
-          cancelButtonText: '取消', 
-          type: 'warning'
-        }
-      ).catch(err => err)
-      if(confirmResult != "confirm") return this.$message.info("已取消删除")
+      const confirmResult = await this.$confirm("此操作将永久删除该文件, 是否继t续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).catch((err) => err);
+      if (confirmResult != "confirm") return this.$message.info("已取消删除");
 
       //删除用户
-      const {data: res} = await this.$http.delete("users/"+id)
-     
-      if(res.meta.status !=200) return this.$message.success("删除失败")
+      const { data: res } = await this.$http.delete("users/" + id);
 
-      this.$message.success("删除用户成功！")
-      this.getUseList()
-    }
+      if (res.meta.status != 200) return this.$message.success("删除失败");
+
+      this.$message.success("删除用户成功！");
+      this.getUseList();
+    },
+
+    //为用户分配角色弹出的对话框
+    async editRole(userInfo) {
+      this.editDialog = true;
+      this.userInfo = userInfo;
+
+      const { data: res } = await this.$http.get("roles");
+      if (res.meta.status != 200) return this.message.error("获取角色列表失败");
+      this.roleList = res.data;
+    },
+
+    //点击按钮分配角色
+    async asveRole() {
+      if (!this.selectRole) return this.$message.error("请选择角色");
+
+      const { data: res } = await this.$http.put(`users/${this.userInfo.id}}`, {
+        rid: this.selectRole,
+      });
+      if (res.meta.status != 200) return this.$message.error("分配失败");
+      this.$message.success("更新角色成功了");
+      this.getUseList();
+      this.editDialog = false;
+    },
   },
 };
 </script>
