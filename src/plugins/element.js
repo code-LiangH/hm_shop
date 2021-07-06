@@ -17,6 +17,11 @@ import {Tooltip} from "element-ui"
 import {Pagination} from "element-ui"
 import {Dialog} from "element-ui"
 import {MessageBox} from "element-ui"
+import {Tag} from "element-ui"
+import {Tree} from "element-ui"
+import {Select} from "element-ui"
+import {Option} from "element-ui"
+import {Cascader} from "element-ui"
 
 Vue.use(Button)
 Vue.use(Form)
@@ -41,6 +46,11 @@ Vue.use(Switch)
 Vue.use(Tooltip)
 Vue.use(Pagination)
 Vue.use(Dialog)
+Vue.use(Tag)
+Vue.use(Tree)
+Vue.use(Select)
+Vue.use(Option)
+Vue.use(Cascader)
 
 
 Vue.prototype.$message = Message   //message可以是任意字母

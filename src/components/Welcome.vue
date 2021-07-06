@@ -1,15 +1,10 @@
 <template>
-  <div>
-      欢迎你啊
-  </div>
+  <div>欢迎你啊</div>
 </template>
 
 <script>
-export default {
-
-}
+export default {};
 </script>
 
 <style>
-
 </style>

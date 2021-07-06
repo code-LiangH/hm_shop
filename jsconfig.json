@@ -1,0 +1,10 @@
+//@为src路径，以下代码为当当初@时会出现路径提示
+{
+    "compilerOptions": {
+      "baseUrl": "./",
+      "paths": {
+          "@/*": ["src/*"]
+      }
+    },
+    "exclude": ["node_modules", "dist"]
+  }

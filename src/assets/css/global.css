@@ -3,4 +3,8 @@ html,body,#app {
     margin: 0;
     padding: 0;
 }
+/* 为商品分类中的添加分类的父级联级分类设置宽度，否则会占满全屏 */
+.el-cascader-menu {
+    height: 300px;
+}
 
